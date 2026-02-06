@@ -1,0 +1,29 @@
+{
+  "name": "content-management-system",
+  "version": "1.0.0",
+  "description": "AI/Tech content pipeline: X scraping + brand personality engine",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "run:pipeline": "tsx src/index.ts --run-now",
+    "run:scrape": "tsx src/index.ts --scrape-only",
+    "run:process": "tsx src/index.ts --process-only",
+    "run:distill": "tsx src/index.ts --distill-only",
+    "run:brief": "tsx src/index.ts --brief-only",
+    "validate:config": "tsx src/personality/validator.ts"
+  },
+  "dependencies": {
+    "@steipete/bird": "^0.8.0",
+    "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
+    "node-cron": "^4.2.1",
+    "pino": "^10.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

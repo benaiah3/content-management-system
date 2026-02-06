@@ -1,0 +1,80 @@
+{
+  "accounts": [
+    {
+      "handle": "karpathy",
+      "category": "ai-research",
+      "priority": "high",
+      "tweet_count": 20,
+      "note": "Former OpenAI/Tesla AI lead, foundational AI insights"
+    },
+    {
+      "handle": "swyx",
+      "category": "ai-engineering",
+      "priority": "high",
+      "tweet_count": 20,
+      "note": "AI engineering thought leader, Latent Space"
+    },
+    {
+      "handle": "sama",
+      "category": "ai-strategy",
+      "priority": "high",
+      "tweet_count": 15,
+      "note": "OpenAI CEO, industry direction signals"
+    },
+    {
+      "handle": "jimfan",
+      "category": "ai-research",
+      "priority": "medium",
+      "tweet_count": 15,
+      "note": "NVIDIA AI researcher, embodied agents"
+    },
+    {
+      "handle": "simonw",
+      "category": "ai-engineering",
+      "priority": "high",
+      "tweet_count": 20,
+      "note": "LLM tooling, practical AI development"
+    }
+  ],
+  "lists": [],
+  "searches": [
+    {
+      "query": "LLM production deployment",
+      "category": "ai-engineering",
+      "count": 20,
+      "note": "Real-world deployment discussions"
+    },
+    {
+      "query": "AI agent framework",
+      "category": "ai-agents",
+      "count": 20,
+      "note": "Agent architecture developments"
+    },
+    {
+      "query": "open source AI model",
+      "category": "open-source-ai",
+      "count": 15,
+      "note": "Open source model releases and benchmarks"
+    },
+    {
+      "query": "RAG retrieval augmented",
+      "category": "ai-engineering",
+      "count": 15,
+      "note": "RAG pattern developments"
+    }
+  ],
+  "trending": {
+    "enabled": true,
+    "ai_only": true,
+    "count": 15,
+    "with_tweets": true,
+    "tweets_per_item": 3
+  },
+  "news": {
+    "enabled": true,
+    "ai_only": true,
+    "count": 10,
+    "with_tweets": true,
+    "tweets_per_item": 5
+  }
+}
