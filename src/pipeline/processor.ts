@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import type { TweetData } from '@steipete/bird';
+import type { TweetData } from './types.js';
 import type { RawTweetBatch, RawNewsBatch, RawBatch, ProcessedTweet, TrendingTopic } from './types.js';
 import { logger } from '../utils/logger.js';
 

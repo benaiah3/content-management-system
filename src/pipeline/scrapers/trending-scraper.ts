@@ -1,9 +1,9 @@
-import type { TwitterClient } from '@steipete/bird';
+import type { XApiClient } from '../x-api-client.js';
 import type { RawNewsBatch, SourcesConfig } from '../types.js';
 import { logger } from '../../utils/logger.js';
 
 export async function scrapeTrending(
-  client: TwitterClient,
+  client: XApiClient,
   sources: SourcesConfig,
 ): Promise<RawNewsBatch[]> {
   const batches: RawNewsBatch[] = [];

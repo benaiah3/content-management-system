@@ -1,6 +1,0 @@
-{
-  // Bird CLI configuration
-  // Tries Safari first, then Chrome for cookie extraction
-  cookieSource: ["safari", "chrome"],
-  timeoutMs: 30000,
-}

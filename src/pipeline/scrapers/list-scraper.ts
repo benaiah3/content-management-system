@@ -1,4 +1,4 @@
-import type { TwitterClient } from '@steipete/bird';
+import type { XApiClient } from '../x-api-client.js';
 import type { RawTweetBatch, SourcesConfig } from '../types.js';
 import { sleep } from '../client.js';
 import { logger } from '../../utils/logger.js';
@@ -6,7 +6,7 @@ import { logger } from '../../utils/logger.js';
 const DELAY_BETWEEN_LISTS_MS = 1500;
 
 export async function scrapeLists(
-  client: TwitterClient,
+  client: XApiClient,
   sources: SourcesConfig,
 ): Promise<RawTweetBatch[]> {
   const batches: RawTweetBatch[] = [];

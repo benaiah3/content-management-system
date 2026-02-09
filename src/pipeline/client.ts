@@ -1,37 +1,49 @@
-import { TwitterClient, resolveCredentials } from '@steipete/bird';
 import { logger } from '../utils/logger.js';
+import { XApiClient } from './x-api-client.js';
 
-let cachedClient: TwitterClient | null = null;
+let cachedClient: XApiClient | null = null;
 
-export async function getBirdClient(): Promise<TwitterClient> {
-  if (cachedClient) return cachedClient;
+function resolveBearerToken(): string {
+  const candidates = [
+    process.env.X_BEARER_TOKEN,
+    process.env.X_API_BEARER_TOKEN,
+    process.env.TWITTER_BEARER_TOKEN,
+    process.env.BEARER_TOKEN,
+  ]
+    .map((v) => (typeof v === 'string' ? v.trim() : ''))
+    .filter(Boolean);
 
-  logger.info('Resolving Twitter credentials...');
-
-  const { cookies, warnings } = await resolveCredentials({
-    cookieSource: ['safari', 'chrome'],
-  });
-
-  if (warnings.length > 0) {
-    logger.warn({ warnings }, 'Credential resolution warnings');
-  }
-
-  if (!cookies.authToken || !cookies.ct0) {
+  if (candidates.length === 0) {
     throw new Error(
-      'Failed to resolve Twitter credentials. Make sure you are logged into X in Safari or Chrome.',
+      'Missing X API bearer token. Set X_BEARER_TOKEN (or TWITTER_BEARER_TOKEN) before running.',
     );
   }
 
-  cachedClient = new TwitterClient({
-    cookies,
-    timeoutMs: 30_000,
-    quoteDepth: 1,
+  return candidates[0];
+}
+
+export async function getXClient(): Promise<XApiClient> {
+  if (cachedClient) return cachedClient;
+
+  logger.info('Initializing X API client...');
+
+  const bearerToken = resolveBearerToken();
+  const baseUrl =
+    process.env.X_API_BASE_URL ??
+    process.env.TWITTER_API_BASE_URL ??
+    'https://api.x.com/2';
+
+  cachedClient = new XApiClient({
+    bearerToken,
+    baseUrl,
+    timeoutMs: Number(process.env.X_API_TIMEOUT_MS ?? '30000') || 30_000,
   });
 
-  logger.info('Bird client initialized');
+  logger.info({ baseUrl }, 'X API client initialized');
   return cachedClient;
 }
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+

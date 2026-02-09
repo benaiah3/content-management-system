@@ -1,4 +1,4 @@
-import type { TwitterClient } from '@steipete/bird';
+import type { XApiClient } from '../x-api-client.js';
 import type { RawTweetBatch, SourcesConfig } from '../types.js';
 import { sleep } from '../client.js';
 import { logger } from '../../utils/logger.js';
@@ -8,7 +8,7 @@ const DELAY_BETWEEN_ACCOUNTS_MS = 1500;
 // Cache handle → userId lookups to avoid repeated API calls
 const userIdCache = new Map<string, string>();
 
-async function resolveUserId(client: TwitterClient, handle: string): Promise<string | null> {
+async function resolveUserId(client: XApiClient, handle: string): Promise<string | null> {
   const normalized = handle.replace(/^@/, '');
 
   if (userIdCache.has(normalized)) {
@@ -16,17 +16,21 @@ async function resolveUserId(client: TwitterClient, handle: string): Promise<str
   }
 
   const result = await client.getUserIdByUsername(normalized);
-  if (result.success && result.userId) {
+  if (!result.success) {
+    logger.warn({ handle, error: result.error }, 'Failed to resolve user ID');
+    return null;
+  }
+
+  if (result.userId) {
     userIdCache.set(normalized, result.userId);
     return result.userId;
   }
 
-  logger.warn({ handle, error: result.error }, 'Failed to resolve user ID');
   return null;
 }
 
 export async function scrapeAccounts(
-  client: TwitterClient,
+  client: XApiClient,
   sources: SourcesConfig,
 ): Promise<RawTweetBatch[]> {
   const batches: RawTweetBatch[] = [];

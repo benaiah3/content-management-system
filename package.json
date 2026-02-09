@@ -14,7 +14,6 @@
     "validate:config": "tsx src/personality/validator.ts"
   },
   "dependencies": {
-    "@steipete/bird": "^0.8.0",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
     "node-cron": "^4.2.1",

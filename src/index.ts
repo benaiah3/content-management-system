@@ -1,4 +1,4 @@
-import { getBirdClient, sleep } from './pipeline/client.js';
+import { getXClient, sleep } from './pipeline/client.js';
 import { loadSources } from './pipeline/sources.js';
 import { scrapeAccounts } from './pipeline/scrapers/account-scraper.js';
 import { scrapeSearches } from './pipeline/scrapers/search-scraper.js';
@@ -21,7 +21,7 @@ const DELAY_BETWEEN_SCRAPER_TYPES_MS = 3000;
 async function runScrape() {
   logger.info('=== SCRAPE STAGE ===');
   const sources = await loadSources();
-  const client = await getBirdClient();
+  const client = await getXClient();
   const paths = datePaths();
 
   const tweetBatches: RawTweetBatch[] = [];
