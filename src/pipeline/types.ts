@@ -1,4 +1,36 @@
-import type { TweetData, NewsItem } from '@steipete/bird';
+export interface TweetAuthor {
+  username: string;
+  name: string;
+}
+
+// Minimal tweet schema used throughout this pipeline.
+// This intentionally matches the fields the processor/distiller need; sources can map into it.
+export interface TweetData {
+  id: string;
+  text: string;
+  author: TweetAuthor;
+  authorId?: string;
+  createdAt?: string;
+  replyCount?: number;
+  retweetCount?: number;
+  likeCount?: number;
+  conversationId?: string;
+  quotedTweet?: {
+    text: string;
+    author: TweetAuthor;
+  };
+}
+
+// Minimal "news/trend" item schema used by the pipeline.
+export interface NewsItem {
+  id: string;
+  headline: string;
+  category?: string;
+  postCount?: number;
+  description?: string;
+  url?: string;
+  tweets?: TweetData[];
+}
 
 export interface RawTweetBatch {
   source: 'account' | 'search' | 'list';

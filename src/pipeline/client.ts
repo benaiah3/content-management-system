@@ -1,65 +1,49 @@
-import { TwitterClient, resolveCredentials } from '@steipete/bird';
 import { logger } from '../utils/logger.js';
-import { tryResolveChromeTwitterCookiesDarwin } from './chrome-cookies-darwin.js';
+import { XApiClient } from './x-api-client.js';
 
-let cachedClient: TwitterClient | null = null;
+let cachedClient: XApiClient | null = null;
 
-export async function getBirdClient(): Promise<TwitterClient> {
-  if (cachedClient) return cachedClient;
+function resolveBearerToken(): string {
+  const candidates = [
+    process.env.X_BEARER_TOKEN,
+    process.env.X_API_BEARER_TOKEN,
+    process.env.TWITTER_BEARER_TOKEN,
+    process.env.BEARER_TOKEN,
+  ]
+    .map((v) => (typeof v === 'string' ? v.trim() : ''))
+    .filter(Boolean);
 
-  logger.info('Resolving Twitter credentials...');
-
-  const chromeProfile = process.env.CHROME_PROFILE ?? process.env.BIRD_CHROME_PROFILE ?? 'Default';
-
-  let { cookies, warnings } = await resolveCredentials({
-    cookieSource: ['chrome', 'safari'],
-    cookieTimeoutMs: 30_000,
-    chromeProfile,
-  });
-
-  let usedFallback = false;
-
-  // Fallback: Bird's Chrome cookie extractor can fail on some systems due to SQLite 64-bit
-  // integer overflow when reading the cookie DB. If we still don't have cookies, try our own
-  // Chrome DB + Keychain decrypt path (macOS only).
-  if (!cookies.authToken || !cookies.ct0) {
-    const fb = await tryResolveChromeTwitterCookiesDarwin({ chromeProfile });
-    warnings = [...warnings, ...fb.warnings];
-    if (fb.cookies.authToken && fb.cookies.ct0) {
-      cookies = fb.cookies;
-      usedFallback = true;
-    }
-  }
-
-  if (warnings.length > 0) {
-    // If fallback succeeded, these warnings are expected noise from the upstream extractor.
-    if (usedFallback) {
-      logger.debug({ warnings }, 'Credential resolution warnings (fallback succeeded)');
-    } else {
-      logger.warn({ warnings }, 'Credential resolution warnings');
-    }
-  }
-
-  if (!cookies.authToken || !cookies.ct0) {
+  if (candidates.length === 0) {
     throw new Error(
-      'Failed to resolve Twitter credentials. Ensure you are logged into X in Chrome, or set AUTH_TOKEN and CT0 env vars.',
+      'Missing X API bearer token. Set X_BEARER_TOKEN (or TWITTER_BEARER_TOKEN) before running.',
     );
   }
 
-  if (usedFallback) {
-    logger.info({ source: cookies.source }, 'Resolved Twitter cookies via Chrome DB fallback');
-  }
+  return candidates[0];
+}
 
-  cachedClient = new TwitterClient({
-    cookies,
-    timeoutMs: 30_000,
-    quoteDepth: 1,
+export async function getXClient(): Promise<XApiClient> {
+  if (cachedClient) return cachedClient;
+
+  logger.info('Initializing X API client...');
+
+  const bearerToken = resolveBearerToken();
+  const baseUrl =
+    process.env.X_API_BASE_URL ??
+    process.env.TWITTER_API_BASE_URL ??
+    'https://api.x.com/2';
+
+  cachedClient = new XApiClient({
+    bearerToken,
+    baseUrl,
+    timeoutMs: Number(process.env.X_API_TIMEOUT_MS ?? '30000') || 30_000,
   });
 
-  logger.info('Bird client initialized');
+  logger.info({ baseUrl }, 'X API client initialized');
   return cachedClient;
 }
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
