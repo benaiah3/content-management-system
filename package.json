@@ -7,11 +7,17 @@
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "run:pipeline": "tsx src/index.ts --run-now",
+    "run:cron": "tsx src/index.ts --cron",
     "run:scrape": "tsx src/index.ts --scrape-only",
     "run:process": "tsx src/index.ts --process-only",
     "run:distill": "tsx src/index.ts --distill-only",
     "run:brief": "tsx src/index.ts --brief-only",
-    "validate:config": "tsx src/personality/validator.ts"
+    "validate:config": "tsx src/personality/validator.ts",
+    "sync:upstream": "bash scripts/sync-upstream.sh",
+    "sync:xalgo": "bash scripts/sync-x-algorithm-repo.sh",
+    "run:latest": "npm run sync:xalgo && npm run run:pipeline",
+    "cron:latest": "npm run sync:xalgo && npm run run:cron",
+    "run:with-xalgo-latest": "npm run sync:xalgo && npm run run:pipeline"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
